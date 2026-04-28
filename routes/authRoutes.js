@@ -1,20 +1,25 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 const router = express.Router();
 
-// Simple login by name + role
 router.post("/login", async (req, res) => {
   try {
-    const { name, role } = req.body;
+    const { name, role, password } = req.body;
 
-    if (!name || !role) {
-      return res.status(400).json({ message: "Name and role are required" });
+    if (!name || !role || !password) {
+      return res.status(400).json({ message: "Name, role and password are required" });
     }
 
     const user = await User.findOne({ name: name.trim(), role });
 
     if (!user) {
+      return res.status(401).json({ message: "Invalid login details" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password || "");
+    if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid login details" });
     }
 

@@ -4,7 +4,6 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// Student: create outpass request
 router.post("/outpass/create", async (req, res) => {
   try {
     const { userId, outTime, returnTime, reason } = req.body;
@@ -22,12 +21,9 @@ router.post("/outpass/create", async (req, res) => {
     const returnDate = new Date(returnTime);
 
     if (returnDate <= outDate) {
-      return res.status(400).json({
-        message: "Return time must be after out time"
-      });
+      return res.status(400).json({ message: "Return time must be after out time" });
     }
 
-    // Overlap check for the same student
     const overlapping = await Outpass.findOne({
       userId,
       outTime: { $lt: returnDate },
@@ -36,9 +32,7 @@ router.post("/outpass/create", async (req, res) => {
     });
 
     if (overlapping) {
-      return res.status(400).json({
-        message: "You already have an overlapping pending/approved request"
-      });
+      return res.status(400).json({ message: "You already have an overlapping pending/approved request" });
     }
 
     const outpass = await Outpass.create({
@@ -54,7 +48,85 @@ router.post("/outpass/create", async (req, res) => {
   }
 });
 
-// Student: view own requests
+router.post("/outpass/update", async (req, res) => {
+  try {
+    const { userId, outpassId, outTime, returnTime, reason } = req.body;
+
+    if (!userId || !outpassId || !outTime || !returnTime || !reason) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const outpass = await Outpass.findById(outpassId);
+    if (!outpass) {
+      return res.status(404).json({ message: "Outpass request not found" });
+    }
+
+    if (String(outpass.userId) !== String(userId)) {
+      return res.status(403).json({ message: "You can edit only your own requests" });
+    }
+
+    if (outpass.status !== "Pending") {
+      return res.status(400).json({ message: "Only pending requests can be edited" });
+    }
+
+    const outDate = new Date(outTime);
+    const returnDate = new Date(returnTime);
+
+    if (returnDate <= outDate) {
+      return res.status(400).json({ message: "Return time must be after out time" });
+    }
+
+    const overlapping = await Outpass.findOne({
+      _id: { $ne: outpassId },
+      userId,
+      outTime: { $lt: returnDate },
+      returnTime: { $gt: outDate },
+      status: { $in: ["Pending", "Approved"] }
+    });
+
+    if (overlapping) {
+      return res.status(400).json({ message: "Updated time overlaps another pending/approved request" });
+    }
+
+    outpass.outTime = outDate;
+    outpass.returnTime = returnDate;
+    outpass.reason = reason.trim();
+    await outpass.save();
+
+    res.json({ message: "Outpass request updated", outpass });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.post("/outpass/cancel", async (req, res) => {
+  try {
+    const { userId, outpassId } = req.body;
+
+    if (!userId || !outpassId) {
+      return res.status(400).json({ message: "userId and outpassId are required" });
+    }
+
+    const outpass = await Outpass.findById(outpassId);
+    if (!outpass) {
+      return res.status(404).json({ message: "Outpass request not found" });
+    }
+
+    if (String(outpass.userId) !== String(userId)) {
+      return res.status(403).json({ message: "You can cancel only your own requests" });
+    }
+
+    if (outpass.status !== "Pending") {
+      return res.status(400).json({ message: "Only pending requests can be canceled" });
+    }
+
+    await Outpass.findByIdAndDelete(outpassId);
+    res.json({ message: "Outpass request canceled" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 router.get("/outpass/my", async (req, res) => {
   try {
     const { userId } = req.query;
@@ -70,19 +142,38 @@ router.get("/outpass/my", async (req, res) => {
   }
 });
 
-// Admin: view all requests
 router.get("/outpass/all", async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { userId, status, studentName, fromDate, toDate } = req.query;
 
     const admin = await User.findById(userId);
     if (!admin || admin.role !== "admin") {
       return res.status(403).json({ message: "Only admin can view all requests" });
     }
 
-    const requests = await Outpass.find()
+    const filter = {};
+
+    if (status && status !== "All") {
+      filter.status = status;
+    }
+
+    if (fromDate || toDate) {
+      filter.outTime = {};
+      if (fromDate) filter.outTime.$gte = new Date(fromDate);
+      if (toDate) filter.outTime.$lte = new Date(toDate);
+    }
+
+    let requests = await Outpass.find(filter)
       .populate("userId", "name role")
       .sort({ createdAt: -1 });
+
+    if (studentName) {
+      const nameLower = studentName.trim().toLowerCase();
+      requests = requests.filter((item) => {
+        const name = item.userId && item.userId.name ? item.userId.name.toLowerCase() : "";
+        return name.includes(nameLower);
+      });
+    }
 
     res.json(requests);
   } catch (error) {
@@ -90,7 +181,6 @@ router.get("/outpass/all", async (req, res) => {
   }
 });
 
-// Admin: approve/reject request
 router.post("/outpass/update-status", async (req, res) => {
   try {
     const { adminUserId, outpassId, status, adminComment } = req.body;

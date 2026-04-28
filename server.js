@@ -1,14 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const bcrypt = require("bcryptjs");
 
 const User = require("./models/User");
 const authRoutes = require("./routes/authRoutes");
 const outpassRoutes = require("./routes/outpassRoutes");
 
 const app = express();
-const PORT = 3000;
-const MONGO_URI = "mongodb://127.0.0.1:27017/outpass_db";
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/outpass_db";
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -17,17 +18,26 @@ app.use(authRoutes);
 app.use(outpassRoutes);
 
 async function seedUsers() {
-  // Create simple demo users if they do not already exist
+  // Demo users with plain passwords for easy viva explanation
   const users = [
-    { name: "Aman", role: "student" },
-    { name: "Riya", role: "student" },
-    { name: "Warden", role: "admin" }
+    { name: "Aman", role: "student", plainPassword: "aman123" },
+    { name: "Riya", role: "student", plainPassword: "riya123" },
+    { name: "Warden", role: "admin", plainPassword: "warden123" }
   ];
 
   for (const userData of users) {
-    const exists = await User.findOne(userData);
-    if (!exists) {
-      await User.create(userData);
+    const existing = await User.findOne({ name: userData.name, role: userData.role });
+    const hashedPassword = await bcrypt.hash(userData.plainPassword, 10);
+
+    if (!existing) {
+      await User.create({
+        name: userData.name,
+        role: userData.role,
+        password: hashedPassword
+      });
+    } else if (!existing.password) {
+      existing.password = hashedPassword;
+      await existing.save();
     }
   }
 }

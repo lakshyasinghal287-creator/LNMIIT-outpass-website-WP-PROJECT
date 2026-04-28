@@ -16,6 +16,42 @@
   </div>
 
   <div class="container">
+    <div class="mini-grid">
+      <div class="info-box"><strong id="allCount">0</strong><br/>Total Requests</div>
+      <div class="info-box"><strong id="allPendingCount">0</strong><br/>Pending</div>
+      <div class="info-box"><strong id="allApprovedCount">0</strong><br/>Approved</div>
+      <div class="info-box"><strong id="allRejectedCount">0</strong><br/>Rejected</div>
+    </div>
+
+    <div class="card">
+      <h2>Filters</h2>
+      <div class="filter-grid">
+        <div>
+          <label>Status</label>
+          <select id="statusFilter">
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div>
+          <label>Student Name</label>
+          <input type="text" id="nameFilter" placeholder="Search by student name" />
+        </div>
+        <div>
+          <label>From Date</label>
+          <input type="date" id="fromDateFilter" />
+        </div>
+        <div>
+          <label>To Date</label>
+          <input type="date" id="toDateFilter" />
+        </div>
+      </div>
+      <button class="small" id="applyFilterBtn">Apply Filters</button>
+      <button class="small secondary" id="resetFilterBtn">Reset</button>
+    </div>
+
     <div class="card">
       <h2>All Outpass Requests</h2>
       <div class="table-wrap">

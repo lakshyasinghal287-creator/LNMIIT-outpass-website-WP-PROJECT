@@ -15,12 +15,15 @@
   </div>
 
   <div class="container">
-    <div class="card" style="max-width: 460px; margin: 20px auto;">
+    <div class="card" style="max-width: 500px; margin: 20px auto;">
       <h2>Login</h2>
       <div id="message"></div>
 
       <label>Name</label>
       <input type="text" id="name" placeholder="Enter your name" />
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" />
 
       <label>Role</label>
       <select id="role">
@@ -30,9 +33,17 @@
 
       <button id="loginBtn">Login</button>
 
-      <p class="muted">
-        Demo users: <b>Aman (student)</b>, <b>Riya (student)</b>, <b>Warden (admin)</b>
-      </p>
+      <div class="mini-grid" style="margin-top: 8px;">
+        <div class="info-box">
+          <strong>Aman</strong><br/>student / aman123
+        </div>
+        <div class="info-box">
+          <strong>Riya</strong><br/>student / riya123
+        </div>
+        <div class="info-box">
+          <strong>Warden</strong><br/>admin / warden123
+        </div>
+      </div>
     </div>
   </div>
 

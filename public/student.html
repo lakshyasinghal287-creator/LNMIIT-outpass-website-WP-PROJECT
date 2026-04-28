@@ -17,6 +17,13 @@
   </div>
 
   <div class="container">
+    <div class="mini-grid">
+      <div class="info-box"><strong id="totalCount">0</strong><br/>Total Requests</div>
+      <div class="info-box"><strong id="pendingCount">0</strong><br/>Pending</div>
+      <div class="info-box"><strong id="approvedCount">0</strong><br/>Approved</div>
+      <div class="info-box"><strong id="rejectedCount">0</strong><br/>Rejected</div>
+    </div>
+
     <div class="card">
       <h2>Create Outpass Request</h2>
       <div id="formMessage"></div>
@@ -35,6 +42,7 @@
 
     <div class="card">
       <h2>My Requests</h2>
+      <p class="muted" style="margin-top:-6px;">Pending requests can be edited or canceled.</p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -44,10 +52,30 @@
               <th>Reason</th>
               <th>Status</th>
               <th>Admin Comment</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="requestsBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Edit Request</h3>
+      <label for="editOutTime">Out Time</label>
+      <input type="text" id="editOutTime" placeholder="Select out date and time" />
+
+      <label for="editReturnTime">Return Time</label>
+      <input type="text" id="editReturnTime" placeholder="Select return date and time" />
+
+      <label for="editReason">Reason</label>
+      <textarea id="editReason" placeholder="Enter reason"></textarea>
+
+      <div class="modal-actions">
+        <button id="cancelEditBtn" class="secondary small">Cancel</button>
+        <button id="saveEditBtn" class="small">Save Changes</button>
       </div>
     </div>
   </div>

@@ -7,10 +7,11 @@ function showMessage(text, type) {
 
 loginBtn.addEventListener("click", async () => {
   const name = document.getElementById("name").value.trim();
+  const password = document.getElementById("password").value;
   const role = document.getElementById("role").value;
 
-  if (!name) {
-    showMessage("Please enter your name", "error");
+  if (!name || !password) {
+    showMessage("Please enter name and password", "error");
     return;
   }
 
@@ -18,7 +19,7 @@ loginBtn.addEventListener("click", async () => {
     const response = await fetch("/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role })
+      body: JSON.stringify({ name, role, password })
     });
 
     const data = await response.json();
