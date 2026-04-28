@@ -9,6 +9,8 @@ const commentModal = document.getElementById("commentModal");
 const adminCommentInput = document.getElementById("adminCommentInput");
 const cancelCommentBtn = document.getElementById("cancelCommentBtn");
 const saveCommentBtn = document.getElementById("saveCommentBtn");
+const studentModal = document.getElementById("studentModal");
+const studentDetailBox = document.getElementById("studentDetailBox");
 
 let selectedOutpassId = null;
 let selectedStatus = null;
@@ -35,6 +37,43 @@ function updateStats(data) {
   document.getElementById("allRejectedCount").textContent = rejected;
 }
 
+function renderAnalytics(analytics) {
+  document.getElementById("stillOutCount").textContent = analytics.stillOutCount;
+  document.getElementById("overdueCount").textContent = analytics.overdueCount;
+
+  const stillOutList = document.getElementById("stillOutList");
+  const overdueList = document.getElementById("overdueList");
+  stillOutList.innerHTML = "";
+  overdueList.innerHTML = "";
+
+  if (!analytics.stillOut.length) {
+    stillOutList.innerHTML = "<li>No student currently out</li>";
+  } else {
+    analytics.stillOut.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = `${item.userId?.name || "Unknown"} (Return: ${formatDate(item.returnTime)})`;
+      stillOutList.appendChild(li);
+    });
+  }
+
+  if (!analytics.overdue.length) {
+    overdueList.innerHTML = "<li>No overdue student</li>";
+  } else {
+    analytics.overdue.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = `${item.userId?.name || "Unknown"} (Was due: ${formatDate(item.returnTime)})`;
+      li.className = "flagged";
+      overdueList.appendChild(li);
+    });
+  }
+}
+
+async function loadAnalytics() {
+  const response = await fetch(`/outpass/analytics?userId=${user.id}`);
+  const data = await response.json();
+  if (response.ok) renderAnalytics(data);
+}
+
 function openCommentModal(outpassId, status) {
   selectedOutpassId = outpassId;
   selectedStatus = status;
@@ -47,6 +86,25 @@ function closeCommentModal() {
   commentModal.classList.remove("show");
   selectedOutpassId = null;
   selectedStatus = null;
+}
+
+function openStudentModal(outpassId) {
+  const request = allRequests.find((x) => x._id === outpassId);
+  if (!request || !request.userId) return;
+
+  const s = request.userId;
+  studentDetailBox.innerHTML = `
+    <div class="info-box"><strong>${s.name || "-"}</strong><br/>Name</div>
+    <div class="info-box"><strong>${s.email || "-"}</strong><br/>Email</div>
+    <div class="info-box"><strong>${s.hostelRoom || "-"}</strong><br/>Hostel Room</div>
+    <div class="info-box"><strong>${s.phone || "-"}</strong><br/>Phone</div>
+  `;
+
+  studentModal.classList.add("show");
+}
+
+function closeStudentModal() {
+  studentModal.classList.remove("show");
 }
 
 function applyFilters(data) {
@@ -88,21 +146,24 @@ function renderRows(data) {
   data.forEach((item) => {
     const row = document.createElement("tr");
 
-    const actionButtons = item.status === "Pending"
+    const pendingActions = item.status === "Pending"
       ? `
         <button class="small" onclick="openCommentModal('${item._id}', 'Approved')">Approve</button>
         <button class="small danger" onclick="openCommentModal('${item._id}', 'Rejected')">Reject</button>
       `
-      : "-";
+      : "";
 
     row.innerHTML = `
-      <td>${item.userId ? item.userId.name : "Unknown"}</td>
+      <td>
+        ${item.userId ? item.userId.name : "Unknown"}<br/>
+        <button class="small secondary" onclick="openStudentModal('${item._id}')">View Student</button>
+      </td>
       <td>${formatDate(item.outTime)}</td>
       <td>${formatDate(item.returnTime)}</td>
       <td>${item.reason}</td>
       <td class="${statusClass(item.status)}">${item.status}</td>
       <td>${item.adminComment || "-"}</td>
-      <td>${actionButtons}</td>
+      <td>${pendingActions || "-"}</td>
     `;
     allRequestsBody.appendChild(row);
   });
@@ -137,6 +198,7 @@ async function submitStatusUpdate() {
 
   closeCommentModal();
   loadAllRequests();
+  loadAnalytics();
 }
 
 async function loadAllRequests() {
@@ -173,10 +235,17 @@ cancelCommentBtn.addEventListener("click", closeCommentModal);
 saveCommentBtn.addEventListener("click", submitStatusUpdate);
 
 commentModal.addEventListener("click", (event) => {
-  if (event.target === commentModal) {
-    closeCommentModal();
-  }
+  if (event.target === commentModal) closeCommentModal();
 });
 
+studentModal.addEventListener("click", (event) => {
+  if (event.target === studentModal) closeStudentModal();
+});
+
+document.getElementById("closeStudentModalBtn").addEventListener("click", closeStudentModal);
+
 window.openCommentModal = openCommentModal;
+window.openStudentModal = openStudentModal;
+
 loadAllRequests();
+loadAnalytics();

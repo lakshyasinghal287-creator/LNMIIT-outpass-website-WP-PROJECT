@@ -18,25 +18,55 @@ app.use(authRoutes);
 app.use(outpassRoutes);
 
 async function seedUsers() {
-  // Demo users with plain passwords for easy viva explanation
   const users = [
-    { name: "Aman", role: "student", plainPassword: "aman123" },
-    { name: "Riya", role: "student", plainPassword: "riya123" },
-    { name: "Warden", role: "admin", plainPassword: "warden123" }
+    {
+      name: "Aman",
+      email: "aman@student.com",
+      role: "student",
+      hostelRoom: "BH-2 104",
+      phone: "9876500001",
+      plainPassword: "aman123"
+    },
+    {
+      name: "Riya",
+      email: "riya@student.com",
+      role: "student",
+      hostelRoom: "GH-1 212",
+      phone: "9876500002",
+      plainPassword: "riya123"
+    },
+    {
+      name: "Warden",
+      email: "warden@lnmiit.ac.in",
+      role: "admin",
+      hostelRoom: "Office",
+      phone: "9876500000",
+      plainPassword: "warden123"
+    }
   ];
 
   for (const userData of users) {
-    const existing = await User.findOne({ name: userData.name, role: userData.role });
     const hashedPassword = await bcrypt.hash(userData.plainPassword, 10);
+    let existing = await User.findOne({ email: userData.email });
+
+    if (!existing) {
+      existing = await User.findOne({ name: userData.name, role: userData.role });
+    }
 
     if (!existing) {
       await User.create({
         name: userData.name,
+        email: userData.email,
         role: userData.role,
+        hostelRoom: userData.hostelRoom,
+        phone: userData.phone,
         password: hashedPassword
       });
-    } else if (!existing.password) {
-      existing.password = hashedPassword;
+    } else {
+      existing.email = existing.email || userData.email;
+      existing.hostelRoom = existing.hostelRoom || userData.hostelRoom;
+      existing.phone = existing.phone || userData.phone;
+      existing.password = existing.password || hashedPassword;
       await existing.save();
     }
   }

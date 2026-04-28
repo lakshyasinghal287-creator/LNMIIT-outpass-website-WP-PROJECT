@@ -17,6 +17,16 @@
   </div>
 
   <div class="container">
+    <div class="card">
+      <h2>Student Details</h2>
+      <div class="mini-grid">
+        <div class="info-box"><strong id="studentName">-</strong><br/>Name</div>
+        <div class="info-box"><strong id="studentEmail">-</strong><br/>Email</div>
+        <div class="info-box"><strong id="studentHostel">-</strong><br/>Hostel Room</div>
+        <div class="info-box"><strong id="studentPhone">-</strong><br/>Phone</div>
+      </div>
+    </div>
+
     <div class="mini-grid">
       <div class="info-box"><strong id="totalCount">0</strong><br/>Total Requests</div>
       <div class="info-box"><strong id="pendingCount">0</strong><br/>Pending</div>
@@ -42,7 +52,7 @@
 
     <div class="card">
       <h2>My Requests</h2>
-      <p class="muted" style="margin-top:-6px;">Pending requests can be edited or canceled.</p>
+      <p class="muted" style="margin-top:-6px;">Pending requests can be edited or canceled. Approved requests include QR pass.</p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -80,7 +90,19 @@
     </div>
   </div>
 
+  <div id="qrModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Outpass QR</h3>
+      <div id="qrContainer" class="qr-box"></div>
+      <p id="qrText" class="muted"></p>
+      <div class="modal-actions">
+        <button id="closeQrBtn" class="small">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <script src="/theme.js"></script>
   <script src="/student.js"></script>
 </body>

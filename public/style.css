@@ -365,3 +365,32 @@ body.dark .flatpickr-day.nextMonthDay {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
 }
+
+.simple-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.simple-list li {
+  margin-bottom: 6px;
+}
+
+.flagged {
+  color: #ff5a69;
+  font-weight: 700;
+}
+
+.qr-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: 10px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: inherit;
+}

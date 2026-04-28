@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Signup</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-title">Student Signup</div>
+    <div class="nav-actions">
+      <button id="themeToggle" class="theme-btn small">Night Mode</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card" style="max-width: 600px; margin: 20px auto;">
+      <h2>Create Student Account</h2>
+      <div id="signupMessage"></div>
+
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Enter full name" />
+
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter email" />
+
+      <label>Hostel Room</label>
+      <input type="text" id="hostelRoom" placeholder="Example: BH-2 104" />
+
+      <label>Phone Number</label>
+      <input type="text" id="phone" placeholder="Enter phone number" />
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Create password" />
+
+      <button id="signupBtn">Sign Up</button>
+      <p class="muted">Already have an account? <a href="/index.html">Login</a></p>
+    </div>
+  </div>
+
+  <script src="/theme.js"></script>
+  <script src="/signup.js"></script>
+</body>
+</html>

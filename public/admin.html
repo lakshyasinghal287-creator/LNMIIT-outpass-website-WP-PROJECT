@@ -23,6 +23,25 @@
       <div class="info-box"><strong id="allRejectedCount">0</strong><br/>Rejected</div>
     </div>
 
+    <div class="mini-grid">
+      <div class="info-box"><strong id="stillOutCount">0</strong><br/>Students Currently Out</div>
+      <div class="info-box"><strong id="overdueCount">0</strong><br/>Overdue (Flagged)</div>
+    </div>
+
+    <div class="card">
+      <h2>Live Movement Analytics</h2>
+      <div class="mini-grid">
+        <div class="info-box">
+          <strong>Currently Out</strong>
+          <ul id="stillOutList" class="simple-list"></ul>
+        </div>
+        <div class="info-box">
+          <strong>Overdue Students</strong>
+          <ul id="overdueList" class="simple-list"></ul>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>Filters</h2>
       <div class="filter-grid">
@@ -81,6 +100,16 @@
       <div class="modal-actions">
         <button id="cancelCommentBtn" class="secondary small">Cancel</button>
         <button id="saveCommentBtn" class="small">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="studentModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Student Details</h3>
+      <div id="studentDetailBox" class="mini-grid"></div>
+      <div class="modal-actions">
+        <button id="closeStudentModalBtn" class="small">Close</button>
       </div>
     </div>
   </div>

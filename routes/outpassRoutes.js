@@ -144,38 +144,46 @@ router.get("/outpass/my", async (req, res) => {
 
 router.get("/outpass/all", async (req, res) => {
   try {
-    const { userId, status, studentName, fromDate, toDate } = req.query;
+    const { userId } = req.query;
 
     const admin = await User.findById(userId);
     if (!admin || admin.role !== "admin") {
       return res.status(403).json({ message: "Only admin can view all requests" });
     }
 
-    const filter = {};
-
-    if (status && status !== "All") {
-      filter.status = status;
-    }
-
-    if (fromDate || toDate) {
-      filter.outTime = {};
-      if (fromDate) filter.outTime.$gte = new Date(fromDate);
-      if (toDate) filter.outTime.$lte = new Date(toDate);
-    }
-
-    let requests = await Outpass.find(filter)
-      .populate("userId", "name role")
+    const requests = await Outpass.find()
+      .populate("userId", "name email hostelRoom phone role")
       .sort({ createdAt: -1 });
 
-    if (studentName) {
-      const nameLower = studentName.trim().toLowerCase();
-      requests = requests.filter((item) => {
-        const name = item.userId && item.userId.name ? item.userId.name.toLowerCase() : "";
-        return name.includes(nameLower);
-      });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.get("/outpass/analytics", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const admin = await User.findById(userId);
+
+    if (!admin || admin.role !== "admin") {
+      return res.status(403).json({ message: "Only admin can view analytics" });
     }
 
-    res.json(requests);
+    const now = new Date();
+
+    const approvedRequests = await Outpass.find({ status: "Approved" })
+      .populate("userId", "name email hostelRoom phone");
+
+    const stillOut = approvedRequests.filter((item) => now >= item.outTime && now <= item.returnTime);
+    const overdue = approvedRequests.filter((item) => now > item.returnTime);
+
+    res.json({
+      stillOutCount: stillOut.length,
+      overdueCount: overdue.length,
+      stillOut,
+      overdue
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

@@ -10,6 +10,9 @@ const editModal = document.getElementById("editModal");
 const editOutTime = document.getElementById("editOutTime");
 const editReturnTime = document.getElementById("editReturnTime");
 const editReason = document.getElementById("editReason");
+const qrModal = document.getElementById("qrModal");
+const qrContainer = document.getElementById("qrContainer");
+const qrText = document.getElementById("qrText");
 
 let selectedOutpassId = null;
 let myRequests = [];
@@ -27,6 +30,13 @@ flatpickr("#outTime", pickerOptions);
 flatpickr("#returnTime", pickerOptions);
 const editOutPicker = flatpickr("#editOutTime", pickerOptions);
 const editReturnPicker = flatpickr("#editReturnTime", pickerOptions);
+
+function renderStudentDetails() {
+  document.getElementById("studentName").textContent = user.name || "-";
+  document.getElementById("studentEmail").textContent = user.email || "-";
+  document.getElementById("studentHostel").textContent = user.hostelRoom || "-";
+  document.getElementById("studentPhone").textContent = user.phone || "-";
+}
 
 function showFormMessage(text, type) {
   formMessage.innerHTML = `<div class="message ${type}">${text}</div>`;
@@ -69,6 +79,36 @@ function closeEditModal() {
   selectedOutpassId = null;
 }
 
+function showQr(outpassId) {
+  const request = myRequests.find((item) => item._id === outpassId);
+  if (!request) return;
+
+  const qrPayload = {
+    outpassId: request._id,
+    student: user.name,
+    email: user.email,
+    hostelRoom: user.hostelRoom,
+    phone: user.phone,
+    outTime: request.outTime,
+    returnTime: request.returnTime,
+    status: request.status
+  };
+
+  qrContainer.innerHTML = "";
+  new QRCode(qrContainer, {
+    text: JSON.stringify(qrPayload),
+    width: 180,
+    height: 180
+  });
+
+  qrText.textContent = `Outpass ID: ${request._id}`;
+  qrModal.classList.add("show");
+}
+
+function closeQr() {
+  qrModal.classList.remove("show");
+}
+
 async function loadMyRequests() {
   const response = await fetch(`/outpass/my?userId=${user.id}`);
   const data = await response.json();
@@ -85,12 +125,15 @@ async function loadMyRequests() {
   data.forEach((item) => {
     const row = document.createElement("tr");
 
-    const actionButtons = item.status === "Pending"
-      ? `
+    let actionButtons = "-";
+    if (item.status === "Pending") {
+      actionButtons = `
         <button class="small" onclick="openEditModal('${item._id}')">Edit</button>
         <button class="small danger" onclick="cancelRequest('${item._id}')">Cancel</button>
-      `
-      : "-";
+      `;
+    } else if (item.status === "Approved") {
+      actionButtons = `<button class="small" onclick="showQr('${item._id}')">Show QR</button>`;
+    }
 
     row.innerHTML = `
       <td>${formatDate(item.outTime)}</td>
@@ -194,12 +237,19 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 
 document.getElementById("cancelEditBtn").addEventListener("click", closeEditModal);
 document.getElementById("saveEditBtn").addEventListener("click", saveEdit);
+document.getElementById("closeQrBtn").addEventListener("click", closeQr);
 
 editModal.addEventListener("click", (event) => {
   if (event.target === editModal) closeEditModal();
 });
 
+qrModal.addEventListener("click", (event) => {
+  if (event.target === qrModal) closeQr();
+});
+
 window.openEditModal = openEditModal;
 window.cancelRequest = cancelRequest;
+window.showQr = showQr;
 
+renderStudentDetails();
 loadMyRequests();
