@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-title">Admin Dashboard (Warden)</div>
+    <div class="nav-actions">
+      <button id="themeToggle" class="theme-btn small">Night Mode</button>
+      <button class="secondary small" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>All Outpass Requests</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Out Time</th>
+              <th>Return Time</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Admin Comment</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="allRequestsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="commentModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Add Comment</h3>
+      <label for="adminCommentInput">Comment (optional)</label>
+      <textarea id="adminCommentInput" placeholder="Write a short comment..."></textarea>
+      <div class="modal-actions">
+        <button id="cancelCommentBtn" class="secondary small">Cancel</button>
+        <button id="saveCommentBtn" class="small">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/theme.js"></script>
+  <script src="/admin.js"></script>
+</body>
+</html>

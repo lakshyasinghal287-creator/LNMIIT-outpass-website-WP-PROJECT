@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-title">Student Dashboard</div>
+    <div class="nav-actions">
+      <button id="themeToggle" class="theme-btn small">Night Mode</button>
+      <button class="secondary small" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>Create Outpass Request</h2>
+      <div id="formMessage"></div>
+
+      <label>Date & Time Out</label>
+      <input type="text" id="outTime" placeholder="Select out date and time" />
+
+      <label>Expected Return Time</label>
+      <input type="text" id="returnTime" placeholder="Select return date and time" />
+
+      <label>Reason</label>
+      <textarea id="reason" placeholder="Enter reason"></textarea>
+
+      <button id="createBtn">Submit Request</button>
+    </div>
+
+    <div class="card">
+      <h2>My Requests</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Out Time</th>
+              <th>Return Time</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Admin Comment</th>
+            </tr>
+          </thead>
+          <tbody id="requestsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="/theme.js"></script>
+  <script src="/student.js"></script>
+</body>
+</html>
