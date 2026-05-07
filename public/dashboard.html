@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Postal Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="nav-title">LNMIIT Postal Records Dashboard</div>
+    <div class="nav-actions">
+      <button id="themeToggle" class="secondary small">Night Mode</button>
+      <span id="userBadge" class="info-chip"></span>
+      <button class="secondary small" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="mini-grid">
+      <div class="info-box"><strong id="totalCount">0</strong><br/>Total Records</div>
+      <div class="info-box"><strong id="incomingCount">0</strong><br/>Incoming</div>
+      <div class="info-box"><strong id="outgoingCount">0</strong><br/>Outgoing</div>
+      <div class="info-box"><strong id="deliveredCount">0</strong><br/>Delivered</div>
+    </div>
+
+    <div class="card">
+      <h2>Add Postal Record</h2>
+      <div id="formMessage"></div>
+      <div class="filter-grid">
+        <div>
+          <label>Movement Type</label>
+          <select id="movementType">
+            <option value="incoming">Incoming</option>
+            <option value="outgoing">Outgoing</option>
+          </select>
+        </div>
+        <div>
+          <label>Article Type</label>
+          <select id="articleType">
+            <option value="letter">Letter</option>
+            <option value="parcel">Parcel</option>
+            <option value="official-document">Official Document</option>
+          </select>
+        </div>
+        <div>
+          <label>Reference No</label>
+          <input type="text" id="referenceNo" placeholder="e.g. LN-POST-1001" />
+        </div>
+        <div>
+          <label>Date</label>
+          <input type="date" id="recordDate" />
+        </div>
+      </div>
+
+      <label>Sender</label>
+      <input type="text" id="sender" placeholder="Sender name or office" />
+
+      <label>Receiver</label>
+      <input type="text" id="receiver" placeholder="Receiver name or office" />
+
+      <label>Department</label>
+      <input type="text" id="department" placeholder="e.g. Accounts, Dean Office" />
+
+      <label>Subject</label>
+      <input type="text" id="subject" placeholder="Short purpose" />
+
+      <label>Status</label>
+      <select id="status">
+        <option value="received">Received</option>
+        <option value="in-transit">In Transit</option>
+        <option value="dispatched">Dispatched</option>
+        <option value="delivered">Delivered</option>
+      </select>
+
+      <label>Remarks</label>
+      <textarea id="remarks" placeholder="Optional remarks"></textarea>
+
+      <button id="createBtn">Save Record</button>
+    </div>
+
+    <div class="card">
+      <h2>Search Records</h2>
+      <div class="filter-grid">
+        <div>
+          <label>Movement</label>
+          <select id="fMovement">
+            <option value="all">All</option>
+            <option value="incoming">Incoming</option>
+            <option value="outgoing">Outgoing</option>
+          </select>
+        </div>
+        <div>
+          <label>Article</label>
+          <select id="fArticle">
+            <option value="all">All</option>
+            <option value="letter">Letter</option>
+            <option value="parcel">Parcel</option>
+            <option value="official-document">Official Document</option>
+          </select>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="fStatus">
+            <option value="all">All</option>
+            <option value="received">Received</option>
+            <option value="in-transit">In Transit</option>
+            <option value="dispatched">Dispatched</option>
+            <option value="delivered">Delivered</option>
+          </select>
+        </div>
+        <div>
+          <label>Keyword</label>
+          <input type="text" id="fKeyword" placeholder="Ref no, sender, receiver, subject" />
+        </div>
+      </div>
+      <button class="small" id="searchBtn">Apply Search</button>
+      <button class="small secondary" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="card">
+      <h2>All Postal Records</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ref No</th>
+              <th>Type</th>
+              <th>Sender</th>
+              <th>Receiver</th>
+              <th>Department</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Remarks</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/theme.js"></script>
+  <script src="/dashboard.js"></script>
+</body>
+</html>
