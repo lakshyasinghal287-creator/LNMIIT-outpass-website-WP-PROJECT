@@ -4,6 +4,7 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 
 const User = require("./models/User");
+const PostalRecord = require("./models/PostalRecord");
 const authRoutes = require("./routes/authRoutes");
 const outpassRoutes = require("./routes/outpassRoutes");
 
@@ -37,13 +38,99 @@ async function seedUsers() {
   }
 }
 
+async function seedPostalRecords() {
+  const existingCount = await PostalRecord.countDocuments();
+  if (existingCount > 0) return;
+
+  const now = new Date();
+  const daysAgo = (d) => new Date(now.getTime() - d * 24 * 60 * 60 * 1000);
+
+  const sample = [
+    {
+      movementType: "incoming",
+      articleType: "letter",
+      referenceNo: "LN-POST-1001",
+      sender: "UGC New Delhi",
+      receiver: "Registrar LNMIIT",
+      department: "Registrar Office",
+      subject: "Accreditation Notice",
+      recordDate: daysAgo(0),
+      status: "received",
+      remarks: "Marked urgent"
+    },
+    {
+      movementType: "outgoing",
+      articleType: "official-document",
+      referenceNo: "LN-POST-1002",
+      sender: "Accounts Section LNMIIT",
+      receiver: "Bank of Rajasthan",
+      department: "Accounts",
+      subject: "Fee Reconciliation File",
+      recordDate: daysAgo(1),
+      status: "dispatched",
+      remarks: "Speed post"
+    },
+    {
+      movementType: "incoming",
+      articleType: "parcel",
+      referenceNo: "LN-POST-1003",
+      sender: "TechBooks India",
+      receiver: "Central Library LNMIIT",
+      department: "Library",
+      subject: "New Semester Book Shipment",
+      recordDate: daysAgo(2),
+      status: "in-transit",
+      remarks: "Arrival expected tomorrow"
+    },
+    {
+      movementType: "outgoing",
+      articleType: "letter",
+      referenceNo: "LN-POST-1004",
+      sender: "Dean Academics LNMIIT",
+      receiver: "AICTE Regional Office",
+      department: "Dean Office",
+      subject: "Annual Academic Compliance",
+      recordDate: daysAgo(4),
+      status: "received",
+      remarks: "Pending dispatch"
+    },
+    {
+      movementType: "incoming",
+      articleType: "official-document",
+      referenceNo: "LN-POST-1005",
+      sender: "Jaipur Municipal Corporation",
+      receiver: "Estate Office LNMIIT",
+      department: "Estate",
+      subject: "Property Tax Communication",
+      recordDate: daysAgo(6),
+      status: "delivered",
+      remarks: "Delivered to estate team"
+    },
+    {
+      movementType: "outgoing",
+      articleType: "parcel",
+      referenceNo: "LN-POST-1006",
+      sender: "Examination Cell LNMIIT",
+      receiver: "Confidential Printing Services",
+      department: "Examination Cell",
+      subject: "Question Paper Envelopes",
+      recordDate: daysAgo(5),
+      status: "in-transit",
+      remarks: "Track with courier desk"
+    }
+  ];
+
+  await PostalRecord.insertMany(sample);
+}
+
 async function startServer() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("MongoDB connected");
 
     await seedUsers();
-    console.log("Demo users ready");
+    await seedPostalRecords();
+    console.log("Demo data ready");
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);

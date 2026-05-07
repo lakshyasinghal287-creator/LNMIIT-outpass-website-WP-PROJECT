@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class="navbar">
-    <div class="nav-title">LNMIIT Postal Records Dashboard</div>
+    <div class="nav-title">LNMIIT Postal Dashboard</div>
     <div class="nav-actions">
       <button id="themeToggle" class="secondary small">Night Mode</button>
       <span id="userBadge" class="info-chip"></span>
@@ -17,105 +17,57 @@
   </div>
 
   <div class="container">
-    <div class="mini-grid">
-      <div class="info-box"><strong id="totalCount">0</strong><br/>Total Records</div>
-      <div class="info-box"><strong id="incomingCount">0</strong><br/>Incoming</div>
-      <div class="info-box"><strong id="outgoingCount">0</strong><br/>Outgoing</div>
+    <div class="card page-nav">
+      <button class="small nav-btn active" data-page="dashboardPage">Dashboard</button>
+      <button class="small nav-btn secondary" data-page="searchPage">Search Records</button>
+      <button class="small nav-btn secondary" data-page="addPage">Add Record</button>
+    </div>
+
+    <section id="dashboardPage">
+    <div class="mini-grid six-cols">
+      <div class="info-box"><strong id="todayIncoming">0</strong><br/>Incoming Today</div>
+      <div class="info-box"><strong id="todayOutgoing">0</strong><br/>Outgoing Today</div>
+      <div class="info-box"><strong id="pendingDispatch">0</strong><br/>Pending</div>
       <div class="info-box"><strong id="deliveredCount">0</strong><br/>Delivered</div>
+      <div class="info-box"><strong id="overdueCount">0</strong><br/>Overdue</div>
+      <div class="info-box"><strong id="totalCount">0</strong><br/>Total</div>
     </div>
 
     <div class="card">
-      <h2>Add Postal Record</h2>
-      <div id="formMessage"></div>
-      <div class="filter-grid">
-        <div>
-          <label>Movement Type</label>
-          <select id="movementType">
-            <option value="incoming">Incoming</option>
-            <option value="outgoing">Outgoing</option>
-          </select>
-        </div>
-        <div>
-          <label>Article Type</label>
-          <select id="articleType">
-            <option value="letter">Letter</option>
-            <option value="parcel">Parcel</option>
-            <option value="official-document">Official Document</option>
-          </select>
-        </div>
-        <div>
-          <label>Reference No</label>
-          <input type="text" id="referenceNo" placeholder="e.g. LN-POST-1001" />
-        </div>
-        <div>
-          <label>Date</label>
-          <input type="date" id="recordDate" />
-        </div>
+      <h2>Status Pipeline</h2>
+      <div class="pipeline-row">
+        <div class="pipeline-step"><span>Received</span><strong id="flowReceived">0</strong></div>
+        <div class="pipeline-step"><span>Dispatched</span><strong id="flowDispatched">0</strong></div>
+        <div class="pipeline-step"><span>In Transit</span><strong id="flowTransit">0</strong></div>
+        <div class="pipeline-step"><span>Delivered</span><strong id="flowDelivered">0</strong></div>
       </div>
-
-      <label>Sender</label>
-      <input type="text" id="sender" placeholder="Sender name or office" />
-
-      <label>Receiver</label>
-      <input type="text" id="receiver" placeholder="Receiver name or office" />
-
-      <label>Department</label>
-      <input type="text" id="department" placeholder="e.g. Accounts, Dean Office" />
-
-      <label>Subject</label>
-      <input type="text" id="subject" placeholder="Short purpose" />
-
-      <label>Status</label>
-      <select id="status">
-        <option value="received">Received</option>
-        <option value="in-transit">In Transit</option>
-        <option value="dispatched">Dispatched</option>
-        <option value="delivered">Delivered</option>
-      </select>
-
-      <label>Remarks</label>
-      <textarea id="remarks" placeholder="Optional remarks"></textarea>
-
-      <button id="createBtn">Save Record</button>
     </div>
 
-    <div class="card">
-      <h2>Search Records</h2>
-      <div class="filter-grid">
-        <div>
-          <label>Movement</label>
-          <select id="fMovement">
-            <option value="all">All</option>
-            <option value="incoming">Incoming</option>
-            <option value="outgoing">Outgoing</option>
-          </select>
-        </div>
-        <div>
-          <label>Article</label>
-          <select id="fArticle">
-            <option value="all">All</option>
-            <option value="letter">Letter</option>
-            <option value="parcel">Parcel</option>
-            <option value="official-document">Official Document</option>
-          </select>
-        </div>
-        <div>
-          <label>Status</label>
-          <select id="fStatus">
-            <option value="all">All</option>
-            <option value="received">Received</option>
-            <option value="in-transit">In Transit</option>
-            <option value="dispatched">Dispatched</option>
-            <option value="delivered">Delivered</option>
-          </select>
-        </div>
-        <div>
-          <label>Keyword</label>
-          <input type="text" id="fKeyword" placeholder="Ref no, sender, receiver, subject" />
-        </div>
+    <div class="mini-grid two-cols">
+      <div class="card">
+        <h2>Priority Queue</h2>
+        <div id="actionCenterList" class="action-list"></div>
       </div>
-      <button class="small" id="searchBtn">Apply Search</button>
+      <div class="card">
+        <h2>Department Load</h2>
+        <div id="deptBars" class="bar-list"></div>
+      </div>
+    </div>
+    </section>
+
+    <section id="searchPage" class="hidden-page">
+    <div class="card">
+      <h2>Filters</h2>
+      <div class="filter-grid">
+        <div><label>Movement</label><select id="fMovement"><option value="all">All</option><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></div>
+        <div><label>Article</label><select id="fArticle"><option value="all">All</option><option value="letter">Letter</option><option value="parcel">Parcel</option><option value="official-document">Official Document</option></select></div>
+        <div><label>Status</label><select id="fStatus"><option value="all">All</option><option value="received">Received</option><option value="dispatched">Dispatched</option><option value="in-transit">In Transit</option><option value="delivered">Delivered</option></select></div>
+        <div><label>Keyword</label><input type="text" id="fKeyword" placeholder="Ref no / sender / receiver" /></div>
+      </div>
+      <button class="small" id="searchBtn">Apply</button>
       <button class="small secondary" id="resetBtn">Reset</button>
+      <button class="small" id="demoBtn">Load Demo Data</button>
+      <button class="small secondary" id="refreshBtn">Refresh</button>
     </div>
 
     <div class="card">
@@ -124,21 +76,49 @@
         <table>
           <thead>
             <tr>
-              <th>Ref No</th>
-              <th>Type</th>
-              <th>Sender</th>
-              <th>Receiver</th>
-              <th>Department</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Remarks</th>
-              <th>Update</th>
+              <th>Ref No</th><th>Type</th><th>From</th><th>To</th><th>Dept</th><th>Date</th><th>Status</th><th>Progress</th><th>Update</th>
             </tr>
           </thead>
           <tbody id="recordsBody"></tbody>
         </table>
       </div>
     </div>
+    </section>
+
+    <section id="addPage" class="hidden-page">
+    <div class="card">
+      <h2>Add Postal Record</h2>
+      <div id="formMessage"></div>
+      <div class="filter-grid">
+        <div><label>Movement Type</label><select id="movementType"><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option></select></div>
+        <div><label>Article Type</label><select id="articleType"><option value="letter">Letter</option><option value="parcel">Parcel</option><option value="official-document">Official Document</option></select></div>
+        <div><label>Reference No (Auto)</label><input type="text" id="referenceNo" placeholder="Auto Generated" maxlength="20" spellcheck="false" readonly /></div>
+        <div><label>Date</label><input type="date" id="recordDate" /></div>
+      </div>
+      <label>Sender</label><input type="text" id="sender" maxlength="80" spellcheck="false" />
+      <label>Receiver</label><input type="text" id="receiver" maxlength="80" spellcheck="false" />
+      <label>Department</label>
+      <select id="department">
+        <option value="">Select Department</option>
+        <option value="Accounts">Accounts</option>
+        <option value="Admissions">Admissions</option>
+        <option value="Central Library">Central Library</option>
+        <option value="Dean Office">Dean Office</option>
+        <option value="Estate Office">Estate Office</option>
+        <option value="Examination Cell">Examination Cell</option>
+        <option value="Hostel Office">Hostel Office</option>
+        <option value="Human Resources">Human Resources</option>
+        <option value="IT Services">IT Services</option>
+        <option value="Registrar Office">Registrar Office</option>
+        <option value="Security Office">Security Office</option>
+        <option value="Student Affairs">Student Affairs</option>
+      </select>
+      <label>Subject</label><input type="text" id="subject" maxlength="120" spellcheck="false" />
+      <label>Status</label><select id="status"><option value="received">Received</option><option value="dispatched">Dispatched</option><option value="in-transit">In Transit</option><option value="delivered">Delivered</option></select>
+      <label>Remarks</label><textarea id="remarks" maxlength="300"></textarea>
+      <button id="createBtn">Save Record</button>
+    </div>
+    </section>
   </div>
 
   <script src="/theme.js"></script>
