@@ -6,17 +6,17 @@ const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 const PostalRecord = require("./models/PostalRecord");
 const authRoutes = require("./routes/authRoutes");
-const outpassRoutes = require("./routes/outpassRoutes");
+const postalRoutes = require("./routes/postalRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/outpass_db";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/postal_records_db";
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(authRoutes);
-app.use(outpassRoutes);
+app.use(postalRoutes);
 
 async function seedUsers() {
   const users = [

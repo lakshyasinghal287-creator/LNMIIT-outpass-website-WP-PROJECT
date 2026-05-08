@@ -1,7 +1,7 @@
 {
-  "name": "outpass-system",
+  "name": "lnmiit-postal-records-system",
   "version": "1.0.0",
-  "description": "Simple Outpass Management System",
+  "description": "Web-based Postal Records Management System for LNMIIT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
